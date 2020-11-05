@@ -20,9 +20,9 @@ function open(success, error, params) {
     var requestUri = new Windows.Foundation.Uri(params.requestUri);
 
     Windows.Security.Authentication.Web.WebAuthenticationBroker.authenticateAsync(options, requestUri, callbackUri).done(function (result) {
-        if (result.responseData == "") {
+        if (result.responseData === "") {
             if (result.responseStatus === 1){
-                error({error: "User cancelled the operation."});
+                error({error: "User cancelled the operation.", cancelled: true});
             } else if (result.responseStatus === 3) {
                 error({error: "HTTP Error", status_code: result.responseErrorDetail})
             } else {
