@@ -20,13 +20,19 @@ function open(success, error, params) {
     var requestUri = new Windows.Foundation.Uri(params.requestUri);
 
     Windows.Security.Authentication.Web.WebAuthenticationBroker.authenticateAsync(options, requestUri, callbackUri).done(function (result) {
-        if (result.responseData == "") {
-            success({error: "An error has occurred.", redirectUrl: null});
+        if (result.responseData === "") {
+            if (result.responseStatus === 1){
+                error({error: "User cancelled the operation.", cancelled: true});
+            } else if (result.responseStatus === 3) {
+                error({error: "HTTP Error", status_code: result.responseErrorDetail})
+            } else {
+                error({error: "An error has occurred."});
+            }
         } else {
             success({error: null, redirectUrl: result.responseData});
         }
     }, function (err) {
-        success({error: err, redirectUrl: null});
+        error({error:err});
     });
 }
 
